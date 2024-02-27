@@ -44,6 +44,13 @@ exports.studentsignout = catchAsyncError(async (req, res, next) => {
 	res.json({ message: 'Signout User!' });
 });
 
+exports.studentUpdate = catchAsyncError(async (req, res, next) => {
+	await Student.findByIdAndUpdate(req.id, req.body).exec();
+	res
+		.status(200)
+		.json({ success: true, student: Student, message: 'Student Updated Successfully!' });
+});
+
 exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findOne({ email: req.body.email }).exec();
 
@@ -53,9 +60,8 @@ exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 		);
 	}
 
-	const url = `${req.protocol}://${req.get('host')}/student/forget-link/${
-		student._id
-	}`;
+	const url = `${req.protocol}://${req.get('host')}/student/forget-link/${student._id
+		}`;
 
 	sendmail(req, res, next, url);
 	student.resetpasswordToken = '1';
