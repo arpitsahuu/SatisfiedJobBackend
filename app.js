@@ -15,7 +15,6 @@ const fileupload = require('express-fileupload');
 app.use(fileupload());
 
 //cors setup
-app.use(cors());
 app.use(
 	cors({
 		credentials: true,
