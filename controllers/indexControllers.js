@@ -51,6 +51,59 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 		.json({ success: true, student: Student, message: 'Student Updated Successfully!' });
 });
 
+
+exports.studentAvatar = catchAsyncError(async (req, res, next) => {
+    const student = await Student.findById(req.id).exec();
+
+    // Check if req.files and req.files.resuma are defined
+    if (req.files && req.files.avatar) {
+        const file = req.files.avatar;
+        const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
+
+        if (student.avatar.fileId !== '') {
+            await imageKit.deleteFile(student.avatar.fileId);
+        }
+
+        const { fileId, url } = await imageKit.upload({
+            file: file.data,
+            fileName: modifiedName,
+        });
+
+        student.avatar = { fileId, url };
+        await student.save();
+
+        return res
+            .status(200)
+            .json({ success: true, message: 'Profile Picture Updated Successfully!' });
+    } else {
+        // Handle the case where req.files or req.files.resuma is undefined
+        return res.status(400).json({ success: false, message: 'No resuma file provided.' });
+    }
+});
+
+
+exports.studentResuma = catchAsyncError(async (req, res, next) => {
+	const student = await Student.findById(req.id).exec();
+	const file = req.files.resumePdf;
+	const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
+
+	if (student.resumePdf.fileId !== '') {
+		await imageKit.deleteFile(student.resumePdf.fileId);
+	}
+
+	const { fileId, url } = await imageKit.upload({
+		file: file.data,
+		fileName: modifiedName,
+	});
+
+	student.resumePdf = { fileId, url };
+	await student.save();
+
+	res
+		.status(200)
+		.json({ success: true, message: 'Resuma Updated Successfully!' });
+});
+
 exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findOne({ email: req.body.email }).exec();
 
@@ -104,28 +157,7 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 		.json({ success: true, message: 'Student Updated Successfully!' });
 });
 
-exports.studentAvatar = catchAsyncError(async (req, res, next) => {
-	const student = await Student.findById(req.id).exec();
 
-	const file = req.files.avatar;
-	const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
-
-	if (student.avatar.fileId !== '') {
-		await imageKit.deleteFile(student.avatar.fileId);
-	}
-
-	const { fileId, url } = await imageKit.upload({
-		file: file.data,
-		fileName: modifiedName,
-	});
-
-	student.avatar = { fileId, url };
-	await student.save();
-
-	res
-		.status(200)
-		.json({ success: true, message: 'Profile Picture Updated Successfully!' });
-});
 
 exports.applyInternship = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();

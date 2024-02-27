@@ -13,6 +13,7 @@ const {
 	applyInternship,
 	applyJob,
 	deleteStudent,
+	studentResuma,
 } = require('../controllers/indexControllers');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -34,6 +35,15 @@ router.post('/student/signin', studentsignin);
 router.get('/student/signout', isAuthenticated, studentsignout);
 
 
+// POST /student/update/
+router.post('/student/update', isAuthenticated, studentUpdate);
+
+// POST /student/avatar
+router.post('/student/avatar', isAuthenticated, studentAvatar);
+
+// POST /student/resuma
+router.post('/student/resumaPdf', isAuthenticated, studentResuma);
+
 
 
 // POST /student/send-mail
@@ -50,11 +60,7 @@ router.post(
 );
 
 
-// POST /student/update/:studentId
-router.post('/student/update', isAuthenticated, studentUpdate);
 
-// POST /student/avatar/:studentId
-router.post('/student/avatar', isAuthenticated, studentAvatar);
 
 /* ---------- Delete Student * -------- */
 // POST /student/delete/:studentId
