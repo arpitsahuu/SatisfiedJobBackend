@@ -32,6 +32,7 @@ const studentModel = mongoose.Schema(
 		email: {
 			type: String,
 			required: true,
+			unique: [true, "Email already exists"],
 			index: { unique: true, sparse: true },
 			match: [
 				/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
