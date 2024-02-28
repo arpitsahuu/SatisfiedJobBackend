@@ -14,12 +14,20 @@ connectDb.databaseConnect();
 const fileupload = require('express-fileupload');
 app.use(fileupload());
 
+
+
 //cors setup
-app.use(cors({
-	origin: ["https://frontend-satisfide-job.onrender.com", "http://localhost:3000/"],
-	credentials: true,
-	methods: ['GET', 'POST', 'PUT', 'DELETE'],
-}));
+app.use(cors({ origin: '*', credentials: true }));
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', true);
+    next();
+});
+
+
+
 
 //logger
 app.use(loggger('tiny'));
