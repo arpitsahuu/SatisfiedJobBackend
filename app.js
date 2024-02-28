@@ -15,14 +15,15 @@ const fileupload = require('express-fileupload');
 app.use(fileupload());
 
 //cors setup
-// app.use(cors());
+
 app.use(
-	cors({
-		credentials: true,
-		origin: true || 'http://localhost:8080/',
-		methods: ['GET', 'POST, PUT', 'DELETE'],
-	})
+    cors({
+        origin: "*",
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    })
 );
+
 
 //logger
 app.use(loggger('tiny'));
