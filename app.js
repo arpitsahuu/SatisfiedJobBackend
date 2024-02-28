@@ -18,11 +18,12 @@ app.use(fileupload());
 
 app.use(
     cors({
-        origin: "*",
+        origin: "https://frontend-satisfide-job.vercel.app/",
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
     })
 );
+
 
 
 //logger
