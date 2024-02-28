@@ -113,7 +113,7 @@ exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 		);
 	}
 
-	const url = `${req.protocol}://${req.get('host')}/student/forget-link/${student._id
+	const url = `${req.protocol}://${req.get('host')}/studentForgetLink/${student._id
 		}`;
 
 	sendmail(req, res, next, url);
@@ -123,7 +123,9 @@ exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 	res.json({ student, url });
 });
 
+
 exports.studentforgetlink = catchAsyncError(async (req, res, next) => {
+	console.log(req.params.id,"id");
 	const student = await Student.findById(req.params.id).exec();
 
 	if (!student) {
@@ -142,6 +144,8 @@ exports.studentforgetlink = catchAsyncError(async (req, res, next) => {
 
 	res.status(200).json({ message: 'Password Changed Successfully' });
 });
+
+
 
 exports.studentresetpassword = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();

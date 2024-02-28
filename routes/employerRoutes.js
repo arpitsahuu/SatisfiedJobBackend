@@ -28,14 +28,21 @@ router.get('/', homepage);
 // GET /student
 router.post('/current', isAuthenticated, currentemployer);
 
-// POST /employer/signup
-router.post('/signup', employersignup);
-
 // POST /employer/signin
 router.post('/signin', employersingin);
 
+// POST /employer/signup
+router.post('/signup', employersignup);
+
 // GET /employer/signout
 router.get('/signout', isAuthenticated, employersignout);
+
+// POST /employer/update/:studentId
+router.post('/update', isAuthenticated, employerUpdate);
+
+// POST /employer/avatar/:studentId
+router.post('/employeravatar', isAuthenticated, employerOrganisationLogo);
+
 
 // POST /employer/send-mail
 router.post('/send-mail', employersendmail);
@@ -46,15 +53,16 @@ router.get('/forget-link/:id', employerforgetlink);
 // POST /employer/reset-password/:studentId
 router.post('/reset-password', isAuthenticated, employerresetpassword);
 
-// POST /employer/update/:studentId
-router.post('/update', isAuthenticated, employerUpdate);
 
-// POST /employer/avatar/:studentId
-router.post('/employeravatar', isAuthenticated, employerOrganisationLogo);
+
+
+
+
 
 /* --------------- Delete Employer ------------ */
 // POST /student/delete/:studentId
 router.delete('/delete', isAuthenticated, deleteEmployer);
+
 
 /* ------------ Intership routes ---------- */
 // POST /employer/intership/create
@@ -69,6 +77,7 @@ router.post(
 	isAuthenticated,
 	readSingleInternship
 );
+
 
 /* ------------ Jobs Routes ---------- */
 // POST /employer/job/create

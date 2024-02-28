@@ -19,6 +19,7 @@ const { isAuthenticated } = require('../middlewares/auth');
 
 const router = express.Router();
 
+
 // GET /
 router.get('/', homepage);
 
@@ -34,7 +35,6 @@ router.post('/student/signin', studentsignin);
 // GET /student/signout
 router.get('/student/signout', isAuthenticated, studentsignout);
 
-
 // POST /student/update/
 router.post('/student/update', isAuthenticated, studentUpdate);
 
@@ -44,13 +44,12 @@ router.post('/student/avatar', isAuthenticated, studentAvatar);
 // POST /student/resuma
 router.post('/student/resumaPdf', isAuthenticated, studentResuma);
 
-
-
 // POST /student/send-mail
 router.post('/student/send-mail', studentsendmail);
 
+
 // GET /student/forget-link/:studentId
-router.get('/student/forget-link/:id', studentforgetlink);
+router.post('/student/forget-link/:	', studentforgetlink);
 
 // POST /student/reset-password/:studentId
 router.post(
@@ -62,9 +61,7 @@ router.post(
 
 
 
-/* ---------- Delete Student * -------- */
-// POST /student/delete/:studentId
-router.delete('/student/delete', isAuthenticated, deleteStudent);
+/* left  */
 
 /* ------------ Apply Intership  ---------- */
 // POST /student/apply/internship/:internshipid
@@ -77,5 +74,12 @@ router.post(
 /* ------------ Apply Job  ---------- */
 // POST /student/apply/job/:jobid
 router.post('/student/apply/job/:jobid', isAuthenticated, applyJob);
+
+
+/* ---------- Delete Student * -------- */
+// POST /student/delete/:studentId
+router.delete('/student/delete', isAuthenticated, deleteStudent);
+
+
 
 module.exports = router;

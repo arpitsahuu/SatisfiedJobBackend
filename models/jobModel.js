@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 
 const jobModel = mongoose.Schema(
 	{
-		students:[{type: mongoose.Schema.Types.ObjectId, ref:"student"}],
+		students: [{ type: mongoose.Schema.Types.ObjectId, ref: "student" }],
 		employer: { type: mongoose.Schema.Types.ObjectId, ref: 'employer' },
 		title: String,
-		skill: String,
+		skills: [String],
 		jobType: { type: String, enum: ['In Office', 'Remote'] },
+		category: { type: String, enum: ['Internship', 'job'] },
 		openings: String,
 		description: String,
 		preferences: String,

@@ -20,8 +20,8 @@ exports.currentemployer = catchAsyncError(async (req, res, next) => {
 
 exports.employersignup = catchAsyncError(async (req, res, next) => {
 	const employer = await new Employer(req.body).save();
-	// sendtoken(employer, 200, res);
-	res.status(201).json({ employer });
+	sendtoken(employer, 200, res);
+	// res.status(201).json({ employer });
 });
 
 exports.employersingin = catchAsyncError(async (req, res, next) => {
