@@ -16,7 +16,7 @@ app.use(fileupload());
 
 //cors setup
 app.use(cors({
-    origin: "*",
+    origin: "https://frontend-satisfide-job.onrender.com",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
