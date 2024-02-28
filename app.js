@@ -15,16 +15,11 @@ const fileupload = require('express-fileupload');
 app.use(fileupload());
 
 //cors setup
-
-app.use(
-    cors({
-        origin: "https://frontend-satisfide-job.vercel.app/",
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    })
-);
-
-
+app.use(cors({
+    origin: "*",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+}));
 
 //logger
 app.use(loggger('tiny'));
