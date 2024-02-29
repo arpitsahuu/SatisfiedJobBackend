@@ -44,6 +44,23 @@ router.post('/update', isAuthenticated, employerUpdate);
 router.post('/employeravatar', isAuthenticated, employerOrganisationLogo);
 
 
+
+/* ------------ Jobs Routes ---------- */
+// POST /employer/job/create
+router.post('/job/create', isAuthenticated, createJob);
+
+// POST /employer/job/readall
+router.post('/job/readall', isAuthenticated, readAllJob);
+
+// POST /employer/job/readsingle/:id
+router.post('/job/readsingle/:id', isAuthenticated, readSingleJob);
+
+
+
+
+
+/* Todo */
+
 // POST /employer/send-mail
 router.post('/send-mail', employersendmail);
 
@@ -52,6 +69,8 @@ router.get('/forget-link/:id', employerforgetlink);
 
 // POST /employer/reset-password/:studentId
 router.post('/reset-password', isAuthenticated, employerresetpassword);
+
+
 
 
 
@@ -77,19 +96,6 @@ router.post(
 	isAuthenticated,
 	readSingleInternship
 );
-
-
-/* ------------ Jobs Routes ---------- */
-// POST /employer/job/create
-router.post('/job/create', isAuthenticated, createJob);
-
-// POST /employer/job/readall
-router.post('/job/readall', isAuthenticated, readAllJob);
-
-// POST /employer/job/readsingle/:id
-router.post('/job/readsingle/:id', isAuthenticated, readSingleJob);
-
-
 
 
 

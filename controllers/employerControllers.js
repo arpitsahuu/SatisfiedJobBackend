@@ -90,6 +90,8 @@ exports.employerresetpassword = catchAsyncError(async (req, res, next) => {
 	sendtoken(employer, 201, res);
 });
 
+
+
 exports.employerUpdate = catchAsyncError(async (req, res, next) => {
 	await Employer.findByIdAndUpdate(req.id, req.body).exec();
 	res
@@ -124,6 +126,28 @@ exports.employerOrganisationLogo = catchAsyncError(async (req, res, next) => {
 
 
 
+/* ------------ Job Controllers ---------- */
+
+exports.createJob = catchAsyncError(async (req, res, next) => {
+	const employer = await Employer.findById(req.id).exec();
+	const job = await new Job(req.body);
+	job.employer = employer._id;
+	employer.jobs.push(job._id);
+	await job.save();
+	await employer.save();
+	res.status(201).json({ success: true, job });
+});
+
+exports.readAllJob = catchAsyncError(async (req, res, next) => {
+	const { jobs } = await Employer.findById(req.id).populate('jobs').exec();
+	res.status(200).json({ success: true, jobs });
+});
+
+exports.readSingleJob = catchAsyncError(async (req, res, next) => {
+	const job = await Job.findById(req.params.id).exec();
+	res.status(200).json({ success: true, job });
+});
+
 
 /* ------------ Intership Controllers ---------- */
 exports.createInternship = catchAsyncError(async (req, res, next) => {
@@ -146,28 +170,6 @@ exports.readAllInternship = catchAsyncError(async (req, res, next) => {
 exports.readSingleInternship = catchAsyncError(async (req, res, next) => {
 	const internship = await Internship.findById(req.params.id).exec();
 	res.status(200).json({ success: true, internship });
-});
-
-/* ------------ Job Controllers ---------- */
-
-exports.createJob = catchAsyncError(async (req, res, next) => {
-	const employer = await Employer.findById(req.id).exec();
-	const job = await new Job(req.body);
-	job.employer = employer._id;
-	employer.jobs.push(job._id);
-	await job.save();
-	await employer.save();
-	res.status(201).json({ success: true, job });
-});
-
-exports.readAllJob = catchAsyncError(async (req, res, next) => {
-	const { jobs } = await Employer.findById(req.id).populate('jobs').exec();
-	res.status(200).json({ success: true, jobs });
-});
-
-exports.readSingleJob = catchAsyncError(async (req, res, next) => {
-	const job = await Job.findById(req.params.id).exec();
-	res.status(200).json({ success: true, job });
 });
 
 /* -------- Sensitive Delete Employer ------ */
