@@ -21,11 +21,11 @@ app.use(cookieparser());
 //cors setup
 // app.use(cors());
 app.use(
-	cors({
-		credentials: true,
-		origin:"*",
-		methods: ['GET', 'POST, PUT', 'DELETE'],
-	})
+    cors({
+        credentials: true,
+        origin: "*",
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    })
 );
 
 //logger
