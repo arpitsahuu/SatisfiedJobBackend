@@ -14,6 +14,10 @@ connectDb.databaseConnect();
 const fileupload = require('express-fileupload');
 app.use(fileupload());
 
+// Express-Session , Cookie-parser
+const cookieparser = require('cookie-parser');
+app.use(cookieparser());
+
 //cors setup
 // app.use(cors());
 app.use(
@@ -31,8 +35,7 @@ app.use(loggger('tiny'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Express-Session , Cookie-parser
-const cookieparser = require('cookie-parser');
+
 const session = require('express-session');
 app.use(
 	session({
@@ -41,7 +44,7 @@ app.use(
 		secret: process.env.EXPRESS_SESSION_SECRET,
 	})
 );
-app.use(cookieparser());
+
 
 //Routes
 app.use('/user', require('./routes/indexRoutes'));

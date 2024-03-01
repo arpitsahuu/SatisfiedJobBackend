@@ -91,9 +91,8 @@ exports.employerresetpassword = catchAsyncError(async (req, res, next) => {
 });
 
 
-
 exports.employerUpdate = catchAsyncError(async (req, res, next) => {
-	await Employer.findByIdAndUpdate(req.id, req.body).exec();
+	await Employer.findByIdAndUpdate(req.id, req.body, { new: true }).exec();
 	res
 		.status(200)
 		.json({ success: true, message: 'Employer Updated Successfully!' });
