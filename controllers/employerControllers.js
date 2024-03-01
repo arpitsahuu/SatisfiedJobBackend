@@ -53,9 +53,9 @@ exports.employersendmail = catchAsyncError(async (req, res, next) => {
 		return next(
 			new ErrorHandler('Employer not found with this Email Address', 404)
 		);
+
 	}
-	const url = `${req.protocol}://${req.get('host')}/employer/forget-link/${employer._id
-		}`;
+	const url = `${process.env.FROENTEND_URI}/admin/${employer._id}`;
 	sendmail(req, res, next, url);
 	employer.resetpasswordToken = '1';
 	await employer.save();
@@ -143,7 +143,7 @@ exports.readAllJob = catchAsyncError(async (req, res, next) => {
 });
 
 exports.readSingleJob = catchAsyncError(async (req, res, next) => {
-	const job = await Job.findById(req.params.id).exec();
+	const job = await Job.findByIdAndUpdate(req.params.id, req.body).populate("employer").exec();
 	res.status(200).json({ success: true, job });
 });
 

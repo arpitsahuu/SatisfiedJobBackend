@@ -53,32 +53,32 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 
 
 exports.studentAvatar = catchAsyncError(async (req, res, next) => {
-    const student = await Student.findById(req.id).exec();
+	const student = await Student.findById(req.id).exec();
 
-    // Check if req.files and req.files.resuma are defined
-    if (req.files && req.files.avatar) {
-        const file = req.files.avatar;
-        const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
+	// Check if req.files and req.files.resuma are defined
+	if (req.files && req.files.avatar) {
+		const file = req.files.avatar;
+		const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
 
-        if (student.avatar.fileId !== '') {
-            await imageKit.deleteFile(student.avatar.fileId);
-        }
+		if (student.avatar.fileId !== '') {
+			await imageKit.deleteFile(student.avatar.fileId);
+		}
 
-        const { fileId, url } = await imageKit.upload({
-            file: file.data,
-            fileName: modifiedName,
-        });
+		const { fileId, url } = await imageKit.upload({
+			file: file.data,
+			fileName: modifiedName,
+		});
 
-        student.avatar = { fileId, url };
-        await student.save();
+		student.avatar = { fileId, url };
+		await student.save();
 
-        return res
-            .status(200)
-            .json({ success: true, message: 'Profile Picture Updated Successfully!' });
-    } else {
-        // Handle the case where req.files or req.files.resuma is undefined
-        return res.status(400).json({ success: false, message: 'No resuma file provided.' });
-    }
+		return res
+			.status(200)
+			.json({ success: true, message: 'Profile Picture Updated Successfully!' });
+	} else {
+		// Handle the case where req.files or req.files.resuma is undefined
+		return res.status(400).json({ success: false, message: 'No resuma file provided.' });
+	}
 });
 
 
@@ -113,7 +113,7 @@ exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 		);
 	}
 
-	const url = `${req.protocol}://${req.get('host')}/studentForgetLink/${student._id
+	const url = `${process.env.FROENTEND_URI}/studentForgetLink/${student._id
 		}`;
 
 	sendmail(req, res, next, url);
@@ -125,8 +125,8 @@ exports.studentsendmail = catchAsyncError(async (req, res, next) => {
 
 
 exports.studentforgetlink = catchAsyncError(async (req, res, next) => {
-	console.log(req.params.id,"id");
 	const student = await Student.findById(req.params.id).exec();
+	console.log(student);
 
 	if (!student) {
 		return next(
@@ -149,6 +149,7 @@ exports.studentforgetlink = catchAsyncError(async (req, res, next) => {
 
 exports.studentresetpassword = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();
+	console.log(student);
 	student.password = req.body.password;
 	await student.save();
 	sendtoken(student, 201, res);
@@ -161,6 +162,29 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 		.json({ success: true, message: 'Student Updated Successfully!' });
 });
 
+
+exports.AllJobs = catchAsyncError(async (req, res, next) => {
+	let queryObj = {};
+
+	if (req.body.title) queryObj.title = req.body.title;
+	if (req.body.location) queryObj.location = req.body.location;
+	if (req.body.category) queryObj.category = req.body.category;
+	if (req.body.experience) queryObj.experience = { $gte: req.body.experience };
+	if (req.body.salary) queryObj.salary =  req.body.salary ;
+
+	const page = req.body.page || 1;
+	const limit = 3;
+	const skip = (page - 1) * limit;
+
+
+	const jobs = await Job.find(queryObj).populate("employer").skip(skip).limit(limit);
+
+	const totalCount = await Job.countDocuments(queryObj);
+
+	const totalPages = Math.ceil(totalCount / limit);
+
+	res.status(200).json({ success: true, totalPages, currentPage: page, jobs });
+});
 
 
 exports.applyInternship = catchAsyncError(async (req, res, next) => {

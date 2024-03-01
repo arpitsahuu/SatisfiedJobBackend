@@ -14,9 +14,9 @@ const {
 	applyJob,
 	deleteStudent,
 	studentResuma,
+	AllJobs
 } = require('../controllers/indexControllers');
 const { isAuthenticated } = require('../middlewares/auth');
-
 const router = express.Router();
 
 
@@ -49,7 +49,7 @@ router.post('/student/send-mail', studentsendmail);
 
 
 // GET /student/forget-link/:studentId
-router.post('/student/forget-link/:	', studentforgetlink);
+router.post('/student/forget-link/:id', studentforgetlink);
 
 // POST /student/reset-password/:studentId
 router.post(
@@ -57,6 +57,10 @@ router.post(
 	isAuthenticated,
 	studentresetpassword
 );
+
+
+// Get /student/View Jobs
+router.post('/student/AllJobs', isAuthenticated, AllJobs);
 
 
 

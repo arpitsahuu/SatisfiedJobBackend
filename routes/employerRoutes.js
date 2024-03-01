@@ -56,7 +56,7 @@ router.post('/job/readall', isAuthenticated, readAllJob);
 router.post('/job/readsingle/:id', isAuthenticated, readSingleJob);
 
 
-
+	
 
 
 /* Todo */
@@ -65,7 +65,7 @@ router.post('/job/readsingle/:id', isAuthenticated, readSingleJob);
 router.post('/send-mail', employersendmail);
 
 // GET /employer/forget-link/:studentId
-router.get('/forget-link/:id', employerforgetlink);
+router.post('/forget-link/:id', employerforgetlink);
 
 // POST /employer/reset-password/:studentId
 router.post('/reset-password', isAuthenticated, employerresetpassword);
