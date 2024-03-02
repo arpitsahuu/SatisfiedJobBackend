@@ -147,6 +147,20 @@ exports.readSingleJob = catchAsyncError(async (req, res, next) => {
 	res.status(200).json({ success: true, job });
 });
 
+/* ----------------All Applications----------------- */
+exports.allApplications = catchAsyncError(async (req, res, next) => {
+	const employer = await Employer.findById(req.id)
+		.populate({
+			path: 'jobs',
+			populate: {
+				path: 'applications',
+				model: 'JobApplication'
+			}
+		})
+		.exec();
+	res.status(200).json({ success: true, applications: employer });
+});
+
 
 /* ------------ Intership Controllers ---------- */
 exports.createInternship = catchAsyncError(async (req, res, next) => {

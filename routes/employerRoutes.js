@@ -17,6 +17,7 @@ const {
 	readAllJob,
 	readSingleJob,
 	deleteEmployer,
+	allApplications
 } = require('../controllers/employerControllers');
 const { isAuthenticated } = require('../middlewares/auth');
 
@@ -56,7 +57,7 @@ router.post('/job/readall', isAuthenticated, readAllJob);
 router.post('/job/readsingle/:id', isAuthenticated, readSingleJob);
 
 
-	
+
 
 
 /* Todo */
@@ -71,7 +72,8 @@ router.post('/forget-link/:id', employerforgetlink);
 router.post('/reset-password', isAuthenticated, employerresetpassword);
 
 
-
+/* get all applications */
+router.get('/allApplications', isAuthenticated, allApplications);
 
 
 
