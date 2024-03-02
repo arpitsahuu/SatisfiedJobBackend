@@ -31,7 +31,7 @@ const employerModel = mongoose.Schema(
 		password: {
 			type: String,
 			select: false,
-			required:[true,"password is required"],
+			required: [true, "password is required"],
 			minLength: [6, 'Password should have atleast 6 Characters'],
 			maxLength: [15, 'Password should not exceed more than 15 Characters'],
 			// match: [/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,1024}$/ , "Password must have this char"],
@@ -52,8 +52,6 @@ const employerModel = mongoose.Schema(
 			required: [true, 'Organisation Name is Required'],
 			minLength: [3, 'Organisation should be atleast of 3 Character'],
 		},
-		internships: [{ type: mongoose.Schema.Types.ObjectId, ref: 'internship' }],
-		jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'job' }],
 	},
 	{ timestamps: true }
 );

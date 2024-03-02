@@ -6,6 +6,7 @@ const ErrorHandler = require('../utils/ErrorHandlers');
 const { sendtoken } = require('../utils/SendToken');
 const { sendmail } = require('../utils/nodemailer');
 const path = require('path');
+const JobApplication = require('../models/jobApplicationModel');
 const imageKit = require('../utils/imageKit').uploadImagekit();
 
 exports.homepage = catchAsyncError((req, res, next) => {
@@ -145,8 +146,6 @@ exports.studentforgetlink = catchAsyncError(async (req, res, next) => {
 	res.status(200).json({ message: 'Password Changed Successfully' });
 });
 
-
-
 exports.studentresetpassword = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();
 	console.log(student);
@@ -170,7 +169,7 @@ exports.AllJobs = catchAsyncError(async (req, res, next) => {
 	if (req.body.location) queryObj.location = req.body.location;
 	if (req.body.category) queryObj.category = req.body.category;
 	if (req.body.experience) queryObj.experience = { $gte: req.body.experience };
-	if (req.body.salary) queryObj.salary =  req.body.salary ;
+	if (req.body.salary) queryObj.salary = req.body.salary;
 
 	const page = req.body.page || 1;
 	const limit = 3;
@@ -185,6 +184,53 @@ exports.AllJobs = catchAsyncError(async (req, res, next) => {
 
 	res.status(200).json({ success: true, totalPages, currentPage: page, jobs });
 });
+
+
+
+
+/* applyForJob , getApplicationsByStudent */
+
+exports.applyForJob = catchAsyncError(async (req, res) => {
+
+	const { jobId, resume } = req.body;
+	const job = await Job.findById(jobId).exec();
+	const student = await Student.findById(req.id).exec();
+
+	const application = new JobApplication({
+		studentId: req.id,
+		jobId,
+		resume
+	});
+	await application.save();
+
+	job.applications.push(application._id);
+	await job.save();
+
+	student.applications.push(application._id);
+	await student.save();
+
+	res.status(201).json({ message: 'Application submitted successfully' });
+})
+
+
+exports.getApplicationsByStudent = catchAsyncError(async (req, res) => {
+	const student = await Student.findById(req.id).populate({
+		path: 'applications',
+		populate: {
+			path: 'jobId',
+			populate: {
+				path: 'employer'
+			}
+		}
+	});
+	res.status(200).json({ success: true, applications: student.applications });
+})
+
+
+
+
+
+
 
 
 exports.applyInternship = catchAsyncError(async (req, res, next) => {
