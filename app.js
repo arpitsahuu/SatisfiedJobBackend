@@ -18,15 +18,15 @@ app.use(fileupload());
 const cookieparser = require('cookie-parser');
 app.use(cookieparser());
 
+
 //cors setup
-// app.use(cors());
-app.use(
-    cors({
-        credentials: true,
-        origin: "*",
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    })
-);
+const allowedOrigins = ['https://frontend-satisfide-job.vercel.app', 'http://localhost:3000'];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true 
+}));
+
+
 
 //logger
 app.use(loggger('tiny'));
