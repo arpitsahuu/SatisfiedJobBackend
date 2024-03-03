@@ -7,6 +7,7 @@ const { sendtoken } = require('../utils/SendToken');
 const { sendmail } = require('../utils/nodemailer');
 const path = require('path');
 const JobApplication = require('../models/jobApplicationModel');
+const Employer = require('../models/employerModel');
 const imageKit = require('../utils/imageKit').uploadImagekit();
 
 exports.homepage = catchAsyncError((req, res, next) => {
@@ -195,6 +196,8 @@ exports.applyForJob = catchAsyncError(async (req, res) => {
 	const { jobId, resume } = req.body;
 	const job = await Job.findById(jobId).exec();
 	const student = await Student.findById(req.id).exec();
+	const employer = await Employer.findById(job.employer).exec();
+
 
 	const application = new JobApplication({
 		studentId: req.id,
@@ -206,11 +209,16 @@ exports.applyForJob = catchAsyncError(async (req, res) => {
 	job.applications.push(application._id);
 	await job.save();
 
+	employer.applications.push(application._id);
+	await employer.save();
+
 	student.applications.push(application._id);
 	await student.save();
 
 	res.status(201).json({ message: 'Application submitted successfully' });
 })
+
+
 
 
 exports.getApplicationsByStudent = catchAsyncError(async (req, res) => {
@@ -223,6 +231,9 @@ exports.getApplicationsByStudent = catchAsyncError(async (req, res) => {
 			}
 		}
 	});
+
+	
+
 	res.status(200).json({ success: true, applications: student.applications });
 })
 

@@ -149,16 +149,20 @@ exports.readSingleJob = catchAsyncError(async (req, res, next) => {
 
 /* ----------------All Applications----------------- */
 exports.allApplications = catchAsyncError(async (req, res, next) => {
-	const employer = await Employer.findById(req.id)
+	// const applications = await Employer.findById(req.id).populate("applications").exec();
+
+	const applications = await Employer.findById(req.id).populate("applications")
 		.populate({
-			path: 'jobs',
-			populate: {
-				path: 'applications',
-				model: 'JobApplication'
-			}
-		})
-		.exec();
-	res.status(200).json({ success: true, applications: employer });
+			path: 'applications',
+			populate: ("jobId studentId")
+		});
+
+
+	
+
+
+
+	res.status(200).json({ success: true, applications:applications.applications });
 });
 
 

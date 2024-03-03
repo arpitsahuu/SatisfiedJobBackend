@@ -57,27 +57,23 @@ router.post('/job/readall', isAuthenticated, readAllJob);
 router.post('/job/readsingle/:id', isAuthenticated, readSingleJob);
 
 
-
-
-
 /* Todo */
 
 // POST /employer/send-mail
 router.post('/send-mail', employersendmail);
 
+
 // GET /employer/forget-link/:studentId
 router.post('/forget-link/:id', employerforgetlink);
+
 
 // POST /employer/reset-password/:studentId
 router.post('/reset-password', isAuthenticated, employerresetpassword);
 
 
+
 /* get all applications */
 router.get('/allApplications', isAuthenticated, allApplications);
-
-
-
-
 
 
 /* --------------- Delete Employer ------------ */
@@ -89,8 +85,12 @@ router.delete('/delete', isAuthenticated, deleteEmployer);
 // POST /employer/intership/create
 router.post('/internship/create', isAuthenticated, createInternship);
 
+
+
 // POST /employer/intership/readall
 router.post('/internship/readall', isAuthenticated, readAllInternship);
+
+
 
 // POST /employer/intership/readsingle/:id
 router.post(
@@ -98,7 +98,6 @@ router.post(
 	isAuthenticated,
 	readSingleInternship
 );
-
 
 
 module.exports = router;

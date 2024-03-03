@@ -53,6 +53,9 @@ const employerModel = mongoose.Schema(
 			minLength: [3, 'Organisation should be atleast of 3 Character'],
 		},
 		jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'job' }],
+		applications: [{
+			type: mongoose.Schema.Types.ObjectId, ref: 'JobApplication'
+		}],
 	},
 	{ timestamps: true }
 );
