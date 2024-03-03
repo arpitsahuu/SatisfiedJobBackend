@@ -10,20 +10,13 @@ const JobApplication = require('../models/jobApplicationModel');
 const Employer = require('../models/employerModel');
 const imageKit = require('../utils/imageKit').uploadImagekit();
 
-exports.homepage = catchAsyncError((req, res, next) => {
-	res.json({ message: 'Homepage of Internshala' });
-});
-
-exports.currentstudent = catchAsyncError(async (req, res, next) => {
-	const student = await Student.findById(req.id).exec();
-	res.json({ student });
-});
 
 exports.studentsignup = catchAsyncError(async (req, res, next) => {
 	const student = await new Student(req.body).save();
 	sendtoken(student, 200, res);
 	res.status(201).json({ student });
 });
+
 
 exports.studentsignin = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findOne({ email: req.body.email })
@@ -40,6 +33,17 @@ exports.studentsignin = catchAsyncError(async (req, res, next) => {
 
 	sendtoken(student, 200, res);
 });
+
+
+exports.homepage = catchAsyncError((req, res, next) => {
+	res.json({ message: 'Homepage of Internshala' });
+});
+
+exports.currentstudent = catchAsyncError(async (req, res, next) => {
+	const student = await Student.findById(req.id).exec();
+	res.json({ student });
+});
+
 
 exports.studentsignout = catchAsyncError(async (req, res, next) => {
 	res.clearCookie('token');
