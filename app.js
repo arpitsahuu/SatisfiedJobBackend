@@ -20,10 +20,10 @@ app.use(cookieparser());
 
 
 //cors setup
-const allowedOrigins = ['https://frontend-satisfide-job.vercel.app', 'http://localhost:3000'];
+const allowedOrigins = ['https://frontend-satisfide-job.vercel.app', 'https://c-frontend-satisfide-job.onrender.com', 'http://localhost:3000'];
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true 
+	origin: allowedOrigins,
+	credentials: true
 }));
 
 
