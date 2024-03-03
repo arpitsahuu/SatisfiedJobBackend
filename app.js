@@ -19,17 +19,19 @@ const cookieparser = require('cookie-parser');
 app.use(cookieparser());
 
 
-//cors setup
+// CORS setup
 const allowedOrigins = [
 	'https://frontend-satisfide-job.vercel.app',
 	'https://c-frontend-satisfide-job.onrender.com',
-	'http://localhost:3000'
+	'http://localhost:3000' // Replace with your actual frontend origin if different
 ];
 
 app.use(cors({
 	origin: allowedOrigins,
-	credentials: true
+	credentials: true,
+	optionsSuccessStatus: 200 // Address potential preflight request issues
 }));
+
 
 
 

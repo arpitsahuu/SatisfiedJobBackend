@@ -53,7 +53,6 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 		.json({ success: true, student: Student, message: 'Student Updated Successfully!' });
 });
 
-
 exports.studentAvatar = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();
 

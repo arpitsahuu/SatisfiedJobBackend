@@ -19,12 +19,7 @@
 
 exports.sendtoken = (student, statusCode, res, req) => {
     const token = student.getjwttoken(); // Assuming this method generates a JWT token
-
-
     res
         .status(statusCode)
-        .cookie('token', token, {
-            httpOnly: true,
-        })
         .json({ success: true, id: student._id, student: student, token }); // Response JSON with success flag, student ID, and token
 };
