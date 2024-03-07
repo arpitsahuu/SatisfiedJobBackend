@@ -12,7 +12,9 @@ connectDb.databaseConnect();
 
 //Express FileUpload
 const fileupload = require('express-fileupload');
-app.use(fileupload());
+app.use(fileupload({
+	useTempFiles:true,
+}));
 
 // Express-Session , Cookie-parser
 const cookieparser = require('cookie-parser');

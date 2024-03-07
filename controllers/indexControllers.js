@@ -9,6 +9,14 @@ const path = require('path');
 const JobApplication = require('../models/jobApplicationModel');
 const Employer = require('../models/employerModel');
 const imageKit = require('../utils/imageKit').uploadImagekit();
+const cloudinary = require("cloudinary").v2;
+const { json } = require('express');
+
+cloudinary.config({ 
+	cloud_name: 'dcj2gzytt', 
+	api_key: process.env.CLOUDINARY_PUBLIC_KEY, 
+	api_secret: process.env.CLOUDINARY_SECRET_KEY 
+  });
 
 exports.homepage = catchAsyncError((req, res, next) => {
 	res.json({ message: 'Homepage of Internshala' });
@@ -62,20 +70,28 @@ exports.studentAvatar = catchAsyncError(async (req, res, next) => {
 		const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
 
 		if (student.avatar.fileId !== '') {
-			await imageKit.deleteFile(student.avatar.fileId);
+			await cloudinary.uploader.destroy(student.avatar.fileId, (error, result) => {
+				if (error) {
+				  console.error('Error deleting file from Cloudinary:', error);
+				} else {
+				  console.log('File deleted successfully:', result);
+				}
+			  });
 		}
-
-		const { fileId, url } = await imageKit.upload({
-			file: file.data,
-			fileName: modifiedName,
+		const filepath =  req.files.avatar;
+		const myavatar = await cloudinary.uploader.upload(filepath.tempFilePath, {
+			folder: "avaters",
 		});
 
-		student.avatar = { fileId, url };
-		await student.save();
+		student.avatar = {
+            fileId: myavatar.public_id, 
+			url: myavatar.secure_url  
+		};
 
+		await student.save();
 		return res
 			.status(200)
-			.json({ success: true, message: 'Profile Picture Updated Successfully!' });
+			.json({ success: true, message: 'Profile Picture Updated Successfully!', student:student });
 	} else {
 		// Handle the case where req.files or req.files.resuma is undefined
 		return res.status(400).json({ success: false, message: 'No resuma file provided.' });
@@ -85,24 +101,28 @@ exports.studentAvatar = catchAsyncError(async (req, res, next) => {
 
 exports.studentResuma = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();
-	const file = req.files.resumePdf;
-	const modifiedName = `internshala-${Date.now()}${path.extname(file.name)}`;
+	const file = req.files.resume;
 
-	if (student.resumePdf.fileId !== '') {
-		await imageKit.deleteFile(student.resumePdf.fileId);
+	if (!file) {
+		return next(new Error('No file uploaded.'));
 	}
 
-	const { fileId, url } = await imageKit.upload({
-		file: file.data,
-		fileName: modifiedName,
-	});
+	if(student.resumePdf.fileId){
+		await cloudinary.uploader.destroy(student.resumePdf.fileId);
+	}
 
-	student.resumePdf = { fileId, url };
-	await student.save();
-
-	res
+	if(file){
+		const result = await cloudinary.uploader.upload(file.tempFilePath, {
+			resource_type: 'raw',
+		});
+	  
+		console.log('File uploaded to Cloudinary:', result);
+		student.resumePdf = { fileId: result.public_id, url: result.secure_url };
+		await student.save()
+		res
 		.status(200)
 		.json({ success: true, message: 'Resuma Updated Successfully!' });
+	}
 });
 
 exports.studentsendmail = catchAsyncError(async (req, res, next) => {
@@ -165,6 +185,20 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 exports.AllJobs = catchAsyncError(async (req, res, next) => {
 	let queryObj = {};
 
+	// if (req.body.title) {
+	// 	query.title = { $regex: new RegExp(req.body.title, 'i') };
+	// }
+	// if (req.body.category) {
+	// 	query.category = { $regex: new RegExp(req.body.category, 'i') };
+	// }
+	// if (req.body.experience) {
+	// 	query.experience = { $regex: new RegExp(req.body.experience, 'i') };
+	// }
+	// if (req.body.salary) {
+	// 	query.salary = { $regex: new RegExp(req.body.salary, 'i') };
+	// }
+	// console.log(queryObj)
+	
 	if (req.body.title) queryObj.title = req.body.title;
 	if (req.body.location) queryObj.location = req.body.location;
 	if (req.body.category) queryObj.category = req.body.category;
@@ -181,6 +215,7 @@ exports.AllJobs = catchAsyncError(async (req, res, next) => {
 	const totalCount = await Job.countDocuments(queryObj);
 
 	const totalPages = Math.ceil(totalCount / limit);
+
 
 	res.status(200).json({ success: true, totalPages, currentPage: page, jobs });
 });
