@@ -98,7 +98,6 @@ exports.studentAvatar = catchAsyncError(async (req, res, next) => {
 	}
 });
 
-
 exports.studentResuma = catchAsyncError(async (req, res, next) => {
 	const student = await Student.findById(req.id).exec();
 	const file = req.files.resume;
@@ -183,42 +182,84 @@ exports.studentUpdate = catchAsyncError(async (req, res, next) => {
 
 
 exports.AllJobs = catchAsyncError(async (req, res, next) => {
-	let queryObj = {};
-
-	// if (req.body.title) {
-	// 	query.title = { $regex: new RegExp(req.body.title, 'i') };
-	// }
-	// if (req.body.category) {
-	// 	query.category = { $regex: new RegExp(req.body.category, 'i') };
-	// }
-	// if (req.body.experience) {
-	// 	query.experience = { $regex: new RegExp(req.body.experience, 'i') };
-	// }
-	// if (req.body.salary) {
-	// 	query.salary = { $regex: new RegExp(req.body.salary, 'i') };
-	// }
-	// console.log(queryObj)
+	try {
+		let queryObj = {
+		};
 	
-	if (req.body.title) queryObj.title = req.body.title;
-	if (req.body.location) queryObj.location = req.body.location;
-	if (req.body.category) queryObj.category = req.body.category;
-	if (req.body.experience) queryObj.experience = { $gte: req.body.experience };
-	if (req.body.salary) queryObj.salary = req.body.salary;
-
-	const page = req.body.page || 1;
-	const limit = 3;
-	const skip = (page - 1) * limit;
-
-
-	const jobs = await Job.find(queryObj).populate("employer").skip(skip).limit(limit);
-
-	const totalCount = await Job.countDocuments(queryObj);
-
-	const totalPages = Math.ceil(totalCount / limit);
-
-
-	res.status(200).json({ success: true, totalPages, currentPage: page, jobs });
+		if (req.body.title) queryObj.title = req.body.title;
+		if (req.body.location) queryObj.location = req.body.location;
+		if (req.body.category) queryObj.category = req.body.category;
+		if (req.body.experience) queryObj.experience = { $gte: req.body.experience };
+		if (req.body.salary) queryObj.salary = req.body.salary;
+		if (req.body.jobType) {
+		  queryObj.jobType = "Remote"
+	  }
+  
+		
+  
+		if (Array.isArray(req.body.skills)) {
+		  queryObj.skills = { $in: req.body.skills };
+		}
+	
+		// Check and set jobType
+		if (req.body.jobType) {
+		  // if (typeof req.body.jobType === 'object') {
+		  //   // Handle jobType as an object
+		  //   for (const type in req.body.jobType) {
+		  // 	if (req.body.jobType[type]) {
+		  // 	  queryObj.jobType = type;
+		  // 	  break; // Assuming only one jobType can be true at a time
+		  // 	}
+		  //   }
+		  // } else if (['In Office', 'Remote'].includes(req.body.jobType)) {
+		  //   // Handle jobType as a string
+		  //   queryObj.jobType = req.body.jobType;
+		  // }
+  
+		}
+	
+		const page = req.body.page || 1;
+		const limit = 3;
+		const skip = (page - 1) * limit;
+	
+		console.log('Query Object:', queryObj);
+	
+		const jobs = await Job.find(queryObj).populate('employer').skip(skip).limit(limit);
+	
+		const totalCount = await Job.countDocuments(queryObj);
+	
+		const totalPages = Math.ceil(totalCount / limit);
+	
+		res.status(200).json({ success: true, totalPages, currentPage: page, jobs });
+	  } catch (error) {
+		console.error('Error in AllJobs route:', error);
+		res.status(500).json({ success: false, error: 'Internal Server Error' });
+	  }
 });
+
+exports.SerchJobs = catchAsyncError(async (req, res, next) => {
+	try {
+		const searchQuery = req.query.q; // Get search query from URL query parameters
+        const jobs = await searchJobs(searchQuery);
+        res.json(jobs);
+	  } catch (error) {
+		console.error('Error in AllJobs route:', error);
+		res.status(500).json({ success: false, error: 'Internal Server Error' });
+	  }
+	  async function searchJobs(query) {
+		const searchRegex = new RegExp(query, 'i'); // 'i' for case-insensitive
+		return Job.find({
+			$or: [
+				{ title: { $regex: searchRegex }},
+				{ skills: { $regex: searchRegex }},
+				{ location: { $regex: searchRegex }},
+				{ description: { $regex: searchRegex }},
+				{ preferences: { $regex: searchRegex }},
+			]
+		});
+	}
+});
+
 
 
 

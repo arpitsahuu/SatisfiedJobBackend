@@ -90,6 +90,9 @@ router.post('/internship/create', isAuthenticated, createInternship);
 // POST /employer/intership/readall
 router.post('/internship/readall', isAuthenticated, readAllInternship);
 
+// POST /employer/intership/readall
+router.post('/internship/readall', isAuthenticated, readAllInternship);
+
 
 
 // POST /employer/intership/readsingle/:id

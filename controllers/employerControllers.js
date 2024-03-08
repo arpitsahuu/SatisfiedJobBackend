@@ -8,6 +8,13 @@ const path = require('path');
 const Internship = require('../models/internshipModel');
 const Job = require('../models/jobModel');
 const imageKit = require('../utils/imageKit').uploadImagekit();
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({ 
+	cloud_name: 'dcj2gzytt', 
+	api_key: process.env.CLOUDINARY_PUBLIC_KEY, 
+	api_secret: process.env.CLOUDINARY_SECRET_KEY 
+  });
 
 exports.homepage = catchAsyncError((req, res, next) => {
 	res.json({ message: 'Employer Homepage of Internshala' });
@@ -102,25 +109,36 @@ exports.employerOrganisationLogo = catchAsyncError(async (req, res, next) => {
 	const employer = await Employer.findById(req.id).exec();
 
 	const file = req.files.organisationlogo;
-	const modifiedName = `internshala-employer_org_logo-${Date.now()}${path.extname(
-		file.name
-	)}`;
+	if (req.files && req.files.organisationlogo) {
+		const file = req.files.organisationlogo;
 
-	if (employer.organisationlogo.fileId !== '') {
-		await imageKit.deleteFile(employer.organisationlogo.fileId);
+		if (employer.organisationlogo.fileId !== '') {
+			await cloudinary.uploader.destroy(employer.organisationlogo.fileId, (error, result) => {
+				if (error) {
+				  console.error('Error deleting file from Cloudinary:', error);
+				} else {
+				  console.log('File deleted successfully:', result);
+				}
+			  });
+		}
+		const filepath =  req.files.organisationlogo;
+		const myavatar = await cloudinary.uploader.upload(filepath.tempFilePath, {
+			folder: "organisationlogo",
+		});
+
+		employer.organisationlogo = {
+            fileId: myavatar.public_id, 
+			url: myavatar.secure_url  
+		};
+
+		await employer.save();
+		return res
+			.status(200)
+			.json({ success: true, message: 'Profile Picture Updated Successfully!', });
+	} else {
+		// Handle the case where req.files or req.files.resuma is undefined
+		return res.status(400).json({ success: false, message: 'No resuma file provided.' });
 	}
-
-	const { fileId, url } = await imageKit.upload({
-		file: file.data,
-		fileName: modifiedName,
-	});
-
-	employer.organisationlogo = { fileId, url };
-	await employer.save();
-
-	res
-		.status(200)
-		.json({ success: true, message: 'Profile Picture Updated Successfully!' });
 });
 
 
